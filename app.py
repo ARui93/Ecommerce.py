@@ -71,6 +71,19 @@ def update_product(product_id):
     db.session.commit()
     return jsonify({"message": "Product update successfully"})
 
+# Adicionado endpoint para buscar todos os produtos do banco de dados
+@app.route("/api/products", methods = ["GET"])
+def get_products():
+    products = Product.query.all()
+    product_list = []
+    for product in products:
+        product_data = {
+            "id": product.id,
+            "name": product.name,
+            "price": product.price,
+        }
+        product_list.append(product_data)
+    return jsonify(product_list)
 
 # Definir uma rota raiz (Página inicial) e a função que será executada quando um usuário requisitar.
 @app.route("/teste")
