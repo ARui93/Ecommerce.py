@@ -23,6 +23,7 @@ class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(80), nullable=False, unique = True)
     password = db.Column(db.String(80), nullable=False)
+    cart = db._relation("CartItem", backref = "user", lazy = True)
 
 # Produto(id, name, price, description)
 class Product(db.Model):
@@ -30,6 +31,12 @@ class Product(db.Model):
     name = db.Column(db.String(120), nullable=False)
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
+
+# Carrinho (id, user_id, product_id)
+class CartItem(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable = False)
+    product_id = db.Column(db.Integer, db.ForeignKey("product.id"), nullable = False)
 
 # Adicionado endpoint de autenticação
 @login_manager.user_loader
@@ -123,10 +130,8 @@ def get_products():
         product_list.append(product_data)
     return jsonify(product_list)
 
-# Definir uma rota raiz (Página inicial) e a função que será executada quando um usuário requisitar.
-@app.route("/teste")
-def hello_Word():
-    return "Hello Word!"
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
